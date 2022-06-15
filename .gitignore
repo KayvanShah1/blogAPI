@@ -107,7 +107,6 @@ celerybeat.pid
 env/
 venv/
 ENV/
-FASTAPI/
 env.bak/
 venv.bak/
 
@@ -128,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# VS Code
+.vscode/
