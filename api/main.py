@@ -1,15 +1,35 @@
-from typing import Union
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
-from fastapi import FastAPI
+from api.routes import users
 
 app = FastAPI()
 
+# Handle CORS protection
+origins = ["*"]
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# register all the APIRouter Endpoints
+app.include_router(users.router)
+
+# Static Files and Templates
+app.mount("/static", StaticFiles(directory="./static"), name="static")
+
+templates = Jinja2Templates(directory="./templates")
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+# Home Page
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
+def landing_page(request: Request):
+    data = {"page": "Home page"}
+    return templates.TemplateResponse("index.html", {"request": request, "data": data})
