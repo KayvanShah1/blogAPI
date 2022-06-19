@@ -1,7 +1,7 @@
 from bson import ObjectId
 from pydantic import BaseModel, Field
 
-from mongodb import PyObjectId
+from app.db.utils import PyObjectId
 
 
 class BlogContent(BaseModel):

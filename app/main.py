@@ -2,10 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from api.routes import templates
-from api.routes import users
+from app.api import templates
+from app.api.v1.api import api_router as api_v1_router
+from app.core import settings
 
-app = FastAPI()
+
+app = FastAPI(title=settings.PROJECT_NAME)
 
 # Handle CORS protection
 origins = ["*"]
@@ -20,7 +22,7 @@ app.add_middleware(
 
 # register all the APIRouter Endpoints
 app.include_router(templates.router)
-app.include_router(users.router)
+app.include_router(api_v1_router, prefix=settings.API_V1_PREFIX)
 
 # Static Files and Templates
-app.mount("/static", StaticFiles(directory="./static"), name="static")
+app.mount("/static", StaticFiles(directory=settings.STATIC_ROOT), name="static")
