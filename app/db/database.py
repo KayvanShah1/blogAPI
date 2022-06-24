@@ -1,7 +1,6 @@
-import os
-
 from motor.motor_asyncio import AsyncIOMotorClient
+from app.core.settings import MONGODB_URI
 
 
-client = AsyncIOMotorClient(os.getenv("MONGODB_URL"))
+client = AsyncIOMotorClient(MONGODB_URI)
 db = client.blogapi
