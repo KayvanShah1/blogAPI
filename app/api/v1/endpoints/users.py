@@ -6,6 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from app.core.security import get_password_hash
 from app.db.database import db
 from app.schemas.users import User, UserResponse
+from app.utils.emails import send_registration_mail
 
 router = APIRouter()
 
@@ -43,5 +44,10 @@ async def register_user(user_info: User):
     created_user = await db["users"].find_one({"_id": new_user.inserted_id})
 
     # Send a registration email
+    await send_registration_mail(
+        "Registration successful",
+        user_info["email"],
+        {"title": "Registration successful", "name": user_info["name"]},
+    )
 
     return created_user

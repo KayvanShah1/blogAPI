@@ -12,6 +12,10 @@ def getenv_boolean(var_name, default_value=False):
     return result
 
 
+# Server Settings
+SERVER_NAME = os.getenv("SERVER_NAME")
+SERVER_HOST = os.getenv("SERVER_HOST")
+
 # Project Settings
 APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(APP_DIR)
@@ -37,6 +41,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # E-Mailing Settings
 SMTP_TLS = getenv_boolean("SMTP_TLS", True)
+SMTP_SSL = getenv_boolean("SMTP_SSL", False)
 SMTP_PORT = None
 _SMTP_PORT = os.getenv("SMTP_PORT")
 if _SMTP_PORT is not None:
@@ -48,7 +53,7 @@ SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 EMAILS_FROM_EMAIL = os.getenv("EMAILS_FROM_EMAIL")
 EMAILS_FROM_NAME = PROJECT_NAME
 EMAIL_RESET_TOKEN_EXPIRE_HOURS = 48
-EMAIL_TEMPLATES_DIR = "/app/app/email-templates/build"
+EMAIL_TEMPLATES_DIR = os.path.join(TEMPLATES_DIR, "email")
 EMAILS_ENABLED = SMTP_HOST and SMTP_PORT and EMAILS_FROM_EMAIL
 
 EMAIL_TEST_USER = "test@example.com"
