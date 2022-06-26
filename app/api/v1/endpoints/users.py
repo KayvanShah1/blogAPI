@@ -1,12 +1,13 @@
 import secrets
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 
+from app.api.utils.security import get_current_user
 from app.core.security import get_password_hash
 from app.db.database import db
-from app.schemas.users import User, UserResponse
-from app.utils.emails import send_registration_mail
+from app.schemas.users import User, UserResponse, UserDetails
+from app.utils.emails import send_registration_email
 
 router = APIRouter()
 
@@ -44,10 +45,18 @@ async def register_user(user_info: User):
     created_user = await db["users"].find_one({"_id": new_user.inserted_id})
 
     # Send a registration email
-    await send_registration_mail(
+    await send_registration_email(
         "Registration successful",
         user_info["email"],
         {"title": "Registration successful", "name": user_info["name"]},
     )
 
     return created_user
+
+
+@router.post(
+    "/details", response_description="Get User details", response_model=UserDetails
+)
+async def details(current_user=Depends(get_current_user)):
+    user = await db["users"].find_one({"_id": current_user["_id"]})
+    return user
