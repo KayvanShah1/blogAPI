@@ -33,3 +33,8 @@ class UserResponse(BaseModel):
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
         schema_extra = {"example": {"name": "John Doe", "email": "jdoe@example.com"}}
+
+
+class UserDetails(BaseModel):
+    name: str = Field(...)
+    email: EmailStr = Field(...)
