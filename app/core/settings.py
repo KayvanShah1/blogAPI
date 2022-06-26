@@ -20,13 +20,16 @@ SERVER_HOST = os.getenv("SERVER_HOST")
 APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(APP_DIR)
 
+# Authentication & Security
 SECRET_KEY = os.getenvb(b"SECRET_KEY")
 if not SECRET_KEY:
     SECRET_KEY = os.urandom(32)
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 8
 BACKEND_CORS_ORIGINS = os.getenv("BACKEND_CORS_ORIGINS")
+ALGORITHM = os.getenv("ALGORITHM")
 
+# General Details
 PROJECT_NAME = os.getenv("PROJECT_NAME", "FastAPI Project")
 API_V1_PREFIX = "/api/v1"
 

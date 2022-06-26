@@ -25,14 +25,14 @@ async def register_user(user_info: User):
     username_found = await db["users"].find_one({"name": user_info["name"]})
     if username_found:
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="Username already exists"
+            status_code=status.HTTP_226_IM_USED, detail="Username already exists"
         )
 
     # Find if the email already exists
     email_found = await db["users"].find_one({"email": user_info["email"]})
     if email_found:
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="Email already exists"
+            status_code=status.HTTP_226_IM_USED, detail="Email already exists"
         )
 
     # Hash the user password

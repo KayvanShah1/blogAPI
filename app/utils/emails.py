@@ -18,7 +18,7 @@ email_config = ConnectionConfig(
 )
 
 
-async def send_registration_mail(subject: str, email_to: str, body: dict):
+async def send_email(subject: str, email_to: str, body: dict, template_name: str):
     message = MessageSchema(
         subject=subject,
         recipients=[email_to],
@@ -27,4 +27,14 @@ async def send_registration_mail(subject: str, email_to: str, body: dict):
     )
 
     fm = FastMail(email_config)
-    await fm.send_message(message, template_name="registration_successful.html")
+    await fm.send_message(message, template_name=template_name)
+
+
+async def send_registration_email(subject: str, email_to: str, body: dict):
+    await send_email(
+        subject, email_to, body, template_name="registration_successful.html"
+    )
+
+
+async def send_password_reset_email(subject: str, email_to: str, body: dict):
+    await send_email(subject, email_to, body, template_name="password_reset.html")
