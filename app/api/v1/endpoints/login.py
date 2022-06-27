@@ -28,7 +28,7 @@ router = APIRouter()
     response_description="Successfully logged In",
 )
 async def login(user_credentials: OAuth2PasswordRequestForm = Depends()):
-    user = await db["users"].find_one({"name": user_credentials.username})
+    user = await db["users"].find_one({"username": user_credentials.username})
     if user and verify_password(user_credentials.password, user["password"]):
         access_token = create_access_token(
             payload={"id": user["_id"], "sub": access_token_jwt_subject}
@@ -69,8 +69,8 @@ async def password_reset_request(user_email: PasswordResetRequest):
         subject="Password Reset Instructions",
         email_to=user_email.email,
         body={
-            "title": f"Password Reset Link for [{user['name']}]",
-            "name": user["name"],
+            "title": f"Password Reset Link for [{user['full_name']}]",
+            "name": user["full_name"],
             "reset_link": pwd_reset_link,
             "password_reset_token": pwd_reset_token,
         },

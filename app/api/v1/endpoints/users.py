@@ -1,9 +1,11 @@
+from datetime import datetime
 import secrets
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 
 from app.api.utils.security import get_current_user
+from app.api.utils.encoders import custom_encoder
 from app.core.security import get_password_hash
 from app.db.database import db
 from app.schemas.users import User, UserResponse, UserDetails
@@ -19,10 +21,12 @@ router = APIRouter()
     response_description="Successfully registered a new user",
 )
 async def register_user(user_info: User):
-    user_info = jsonable_encoder(user_info)
+    user_info = jsonable_encoder(user_info, custom_encoder=custom_encoder)
 
     # Find if the username already exists
-    username_found = await db["users"].find_one({"name": user_info["name"]})
+    username_found = await db["users"].find_one(
+        {"username": user_info["username"].lower().replace(" ", "_")}
+    )
     if username_found:
         raise HTTPException(
             status_code=status.HTTP_226_IM_USED, detail="Username already exists"
@@ -48,7 +52,7 @@ async def register_user(user_info: User):
     await send_registration_email(
         "Registration successful",
         user_info["email"],
-        {"title": "Registration successful", "name": user_info["name"]},
+        {"title": "Registration successful", "name": user_info["full_name"]},
     )
 
     return created_user
