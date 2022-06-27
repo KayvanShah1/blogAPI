@@ -58,6 +58,7 @@ class UserDetails(BaseModel):
 class UserUpdate(BaseModel):
     username: Optional[str] = Field(...)
     full_name: Optional[str] = Field(...)
+    email: Optional[EmailStr] = Field(...)
     updated_at: datetime = datetime.utcnow()
 
     class Config:

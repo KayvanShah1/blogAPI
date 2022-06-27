@@ -1,4 +1,3 @@
-from datetime import datetime
 import secrets
 
 from fastapi import APIRouter, Depends, HTTPException, status
