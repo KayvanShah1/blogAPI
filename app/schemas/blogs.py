@@ -26,12 +26,12 @@ class BlogCreate(BlogBase):
         }
 
 
-class BlogUpdate(BlogCreate):
+class BlogUpdate(BlogBase):
     updated_at: datetime = datetime.utcnow()
 
 
 class BlogResponse(BlogCreate):
-    author_name: str = Field(...)
-    author_id: str = Field(...)
-    created_at: datetime | None
+    author_name: str
+    author_id: str
+    created_at: datetime
     updated_at: datetime | None
