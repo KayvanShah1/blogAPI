@@ -46,7 +46,7 @@ async def get_blog_posts(limit: int = 5, orderby: str = "created_at"):
 
 @router.get(
     "/{id}",
-    status_code=status.HTTP_302_FOUND,
+    status_code=status.HTTP_200_OK,
     response_model=BlogResponse,
     response_description="Get a blog post",
 )
@@ -78,6 +78,28 @@ async def update_blog_post(
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You are not the owner. Cannot modify/update the blog post. Access Denied",
+            )
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"Blog Post not found",
+    )
+
+
+@router.delete(
+    "/{id}",
+    status_code=status.HTTP_200_OK,
+    response_model=Message,
+    response_description="Delete a blog post",
+)
+async def delete_blog_post(id: str, current_user=Depends(get_current_user)):
+    if blog_post := await find_blog(id):
+        if blog_post["author_id"] == current_user.get("_id"):
+            return Message(msg="Blog post has been permanently deleted")
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You are not the owner. Cannot delete the blog post. Access Denied",
             )
 
     raise HTTPException(
