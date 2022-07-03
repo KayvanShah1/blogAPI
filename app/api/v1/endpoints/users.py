@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 
 from app.api.utils.security import get_current_user
-from app.api.utils.encoders import custom_encoder
+from app.schemas import custom_encoder
 from app.core.security import get_password_hash
 from app.db.database import db
 from app.schemas.users import User, UserResponse, UserDetails
