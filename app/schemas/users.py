@@ -1,9 +1,9 @@
-from bson import ObjectId
 from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 
 from app.db.utils import PyObjectId
+from app.schemas import custom_encoder
 
 
 class User(BaseModel):
@@ -17,7 +17,7 @@ class User(BaseModel):
     class Config:
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+        json_encoders = custom_encoder
         schema_extra = {
             "example": {
                 "username": "john_doe",
@@ -37,7 +37,7 @@ class UserResponse(BaseModel):
     class Config:
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+        json_encoders = custom_encoder
         schema_extra = {
             "example": {
                 "username": "john_doe",
@@ -56,6 +56,7 @@ class UserDetails(BaseModel):
 
 
 class UserUpdate(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     username: Optional[str] = Field(...)
     full_name: Optional[str] = Field(...)
     email: Optional[EmailStr] = Field(...)
