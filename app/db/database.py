@@ -6,3 +6,4 @@ client = AsyncIOMotorClient(MONGODB_URI)
 db = client.blogapi
 
 users_collection = db["users"]
+blogs_collection = db["blogs"]
