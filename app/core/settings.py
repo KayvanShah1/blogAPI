@@ -26,7 +26,7 @@ if not SECRET_KEY:
     SECRET_KEY = os.urandom(32)
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 8
-BACKEND_CORS_ORIGINS = os.getenv("BACKEND_CORS_ORIGINS")
+BACKEND_CORS_ORIGINS = eval(os.getenv("BACKEND_CORS_ORIGINS"))
 ALGORITHM = os.getenv("ALGORITHM")
 
 # General Details

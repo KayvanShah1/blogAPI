@@ -10,7 +10,7 @@ from app.core import settings
 app = FastAPI(title=settings.PROJECT_NAME)
 
 # Handle CORS protection
-origins = ["*"]
+origins = settings.BACKEND_CORS_ORIGINS
 
 app.add_middleware(
     CORSMiddleware,
