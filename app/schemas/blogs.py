@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from bson import ObjectId
 
 from pydantic import BaseModel, Field
@@ -13,7 +14,7 @@ class BlogBase(BaseModel):
 
 class BlogCreate(BlogBase):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    created_at: datetime = datetime.utcnow()
+    created_at: Optional[datetime] = datetime.utcnow()
 
     class Config:
         arbitrary_types_allowed = True
@@ -27,7 +28,7 @@ class BlogCreate(BlogBase):
 
 
 class BlogUpdate(BlogBase):
-    updated_at: datetime = datetime.utcnow()
+    updated_at: Optional[datetime] = datetime.utcnow()
 
 
 class BlogResponse(BlogCreate):

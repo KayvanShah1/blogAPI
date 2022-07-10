@@ -1,10 +1,11 @@
+from datetime import datetime
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 import pymongo
 
 from app.api.utils.security import get_current_user
-from app.crud.blog import insert_blog, find_blogs, find_blog, update_blog
+from app.crud.blog import delete_blog, insert_blog, find_blogs, find_blog, update_blog
 from app.schemas import custom_encoder
 from app.schemas.blogs import BlogCreate, BlogResponse, BlogUpdate
 from app.schemas.msg import Message
@@ -23,6 +24,7 @@ async def create_blog(blog_content: BlogCreate, current_user=Depends(get_current
     blog_content = jsonable_encoder(blog_content, custom_encoder=custom_encoder)
     blog_content["author_name"] = current_user["full_name"]
     blog_content["author_id"] = current_user["_id"]
+    blog_content["created_at"] = datetime.utcnow()
 
     created_blog_post = await insert_blog(blog_content)
     if not created_blog_post:
@@ -35,7 +37,7 @@ async def create_blog(blog_content: BlogCreate, current_user=Depends(get_current
 
 @router.get(
     "/",
-    status_code=status.HTTP_302_FOUND,
+    status_code=status.HTTP_200_OK,
     response_model=List[BlogResponse],
     response_description="Get all blog posts",
 )
@@ -68,11 +70,12 @@ async def get_blog(id: str):
 async def update_blog_post(
     id: str, blog_content: BlogUpdate, current_user=Depends(get_current_user)
 ):
+    blog_content = jsonable_encoder(blog_content, custom_encoder=custom_encoder)
+    blog_content["updated_at"] = datetime.utcnow()
+
     if blog_post := await find_blog(id):
         if blog_post["author_id"] == current_user.get("_id"):
-            updated_blog = await update_blog(
-                id, jsonable_encoder(blog_content, custom_encoder=custom_encoder)
-            )
+            updated_blog = await update_blog(id, blog_content)
             return updated_blog
         else:
             raise HTTPException(
@@ -95,7 +98,8 @@ async def update_blog_post(
 async def delete_blog_post(id: str, current_user=Depends(get_current_user)):
     if blog_post := await find_blog(id):
         if blog_post["author_id"] == current_user.get("_id"):
-            return Message(msg="Blog post has been permanently deleted")
+            resp = await delete_blog(id)
+            return {"msg": f"Blog post has been permanently deleted.\n{resp}"}
         else:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,

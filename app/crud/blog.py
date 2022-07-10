@@ -1,9 +1,11 @@
 from fastapi import HTTPException, status
+from fastapi.responses import JSONResponse
+
 from app.db.database import blogs_collection
 from app.crud.utils import remove_none_from_data_dict
 
 
-async def find_blog(id):
+async def find_blog(id: str):
     return await blogs_collection.find_one({"_id": id})
 
 
@@ -20,7 +22,7 @@ async def insert_blog(blog_content: dict):
     return created_blog_post
 
 
-async def update_blog(id, blog_content: dict):
+async def update_blog(id: str, blog_content: dict):
     blog_content = remove_none_from_data_dict(blog_content)
     if len(blog_content) >= 1:
         update_result = await blogs_collection.update_one(
@@ -39,3 +41,12 @@ async def update_blog(id, blog_content: dict):
         status_code=status.HTTP_304_NOT_MODIFIED,
         detail="Blog post not modified. Operation failed",
     )
+
+
+async def delete_blog(id: str):
+    deleted_blog = await blogs_collection.delete_one({"_id": id})
+    if deleted_blog.deleted_count == 1:
+        return JSONResponse(
+            content="Blog post has been permanently deleted",
+            status_code=status.HTTP_204_NO_CONTENT,
+        )
