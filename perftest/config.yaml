@@ -1,0 +1,33 @@
+config:
+  target: "http://localhost:8000" # default target
+  phases:
+    - arrivalRate: 10
+      duration: 60
+scenarios:
+  - name: Create Blogs
+    flow:
+      - get:
+          url: "/api/v1/blogs/create"
+          json:
+            title: "Getting started with authentication"
+            body:
+              "This topic shows how to quickly authenticate to a Google Cloud
+              API for testing purposes. It does not show how to authenticate to
+              non-Google Cloud APIs, such as the Google Maps Platform APIs. For
+              information about API keys for Google Maps Platform APIs and SDKs,
+              see the Google Maps documentation. Before proceeding, we recommend
+              that all Google Cloud developers first read the Authentication
+              overview topic to understand how authentication works in Google
+              Cloud, including common scenarios and strategies. Additionally,
+              before deploying an application to a production environment,
+              ensure that you've read Authenticating as a service account. Note:
+              If your application runs on-premises, or on another cloud
+              provider, you can use workload identity federation to grant access
+              to external identities without using a service account key. Some
+              client libraries can use Application Default Credentials (ADC) to
+              automatically generate credentials for external identities. To
+              learn more, see Configuring workload identity federation."
+  - name: Get Blog Posts
+    flow:
+      - get:
+          url: "/api/v1/blogs"
