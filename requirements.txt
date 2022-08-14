@@ -11,3 +11,4 @@ python-jose[cryptography]
 python-multipart>=0.0.5
 PyYAML>=6.0
 uvicorn[standard]
+gunicorn>=20.1.0
