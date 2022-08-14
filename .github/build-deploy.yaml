@@ -1,0 +1,98 @@
+name: BlogAPI deployment
+
+on:
+  # specify the branches this action works on
+  push:
+    branches:
+      - "main"
+
+jobs:
+  # job name can be anything
+  build:
+    # specify the OS to run on.
+    runs-on: ubuntu-latest
+    # steps, things done. Each step has a name that is used to identify the step
+    steps:
+      - name: Pull repo
+        # https://github.com/orgs/actions/repositories?type=all
+        uses: actions/checkout@v3
+
+      # install python3
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10.4"
+      - name: Upgrade Pip
+        run: python -m pip install --upgrade pip
+      - name: Install all dependencies
+        run: pip install -r requirements.txt
+
+  heriku-deployment:
+    runs-on: ubuntu-latest
+    # cause git actions runs jobs in parallel
+    needs: [build]
+
+    # add environment variables
+    environment:
+      name: heroku_deployment
+    # doing things manually
+    # pull git repo
+    # install heroku cli
+    # heroku login
+    # add git remote to heroku
+    # git push heroku master
+
+    steps:
+      - name: Get actions
+        uses: actions/checkout@v3
+      - name: Deploying to heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+          heroku_email: ${{secrets.HEROKU_USERNAME}}
+          # sometimes deploying the code can cause work but, the app crashes on herok
+          # health check can alert you on this.
+          # https://github.com/marketplace/actions/deploy-to-heroku
+          healthcheck: "https://${{secrets.HEROKU_APP_NAME}}.herokuapp.com/health"
+
+  # https://docs.docker.com/language/golang/configure-ci-cd/
+  docker-deployment:
+    runs-on: ubuntu-latest
+    
+    # specify the environment to us
+    environment:
+      name: docker_hub
+
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Set up Docker Buildx
+        id:   buildx
+        uses: docker/setup-buildx-action@v1
+      
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+        
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          push: false
+          load: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/blog_it:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
