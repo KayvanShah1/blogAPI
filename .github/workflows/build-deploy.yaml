@@ -27,7 +27,7 @@ jobs:
       - name: Install all dependencies
         run: pip install -r requirements.txt
 
-  heriku-deployment:
+  heroku-deployment:
     runs-on: ubuntu-latest
     # cause git actions runs jobs in parallel
     needs: [build]
