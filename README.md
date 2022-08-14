@@ -43,6 +43,18 @@ Run the command below in the terminal
     ```
 
 2. Windows
+
     ```cmd
     uvicorn app.main:app --reload
+    ```
+
+3. Run with Uvicorn multiple workers
+
+    ```bash
+    uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+    ```
+
+4. Run with Gunicorn & Uvicorn
+    ```bash
+    gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
     ```
