@@ -54,7 +54,7 @@ jobs:
           # sometimes deploying the code can cause work but, the app crashes on herok
           # health check can alert you on this.
           # https://github.com/marketplace/actions/deploy-to-heroku
-          healthcheck: "https://${{secrets.HEROKU_APP_NAME}}.herokuapp.com/health"
+          # healthcheck: "https://${{secrets.HEROKU_APP_NAME}}.herokuapp.com/health"
 
   # https://docs.docker.com/language/golang/configure-ci-cd/
   docker-deployment:
